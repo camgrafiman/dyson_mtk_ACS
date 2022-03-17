@@ -1,0 +1,27 @@
+{
+  "name": "dyson_mtk_acs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "dev": "node -r esm index.js",
+    "devmon": "nodemon -r esm index.js"
+  },
+  "author": "Manuel Alejandro Gallego - camgrafiman",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "body-parser": "^1.19.0",
+    "cheerio": "^1.0.0-rc.9",
+    "cors": "^2.8.5",
+    "esm": "^3.2.25",
+    "express": "^4.17.1",
+    "nedb": "^1.8.0",
+    "xml-formatter": "^2.4.0",
+    "xmlbuilder2": "^2.4.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
