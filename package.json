@@ -6,6 +6,7 @@
   "scripts": {
     "test": "test",
     "dev": "node -r esm index.js",
+    "start": "node -r esm index.js",
     "devmon": "nodemon -r esm index.js"
   },
   "author": "Manuel Alejandro Gallego - camgrafiman",

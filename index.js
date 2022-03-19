@@ -7,6 +7,7 @@ import { getProductPage } from './lib/scrapper_controllers/productPageInfo';
 import { createXML } from './lib/utils/createXML';
 import getDB from './lib/lowdatabase';
 const db = getDB();
+const port = 5000;
 
 /* Servidor EXPRESS */
 const app = express();
@@ -137,6 +138,6 @@ app.get('/showinsdata', async (req, res) => {
 	});
 });
 
-app.listen(5000, () =>
+app.listen(process.env.PORT || port, () =>
 	console.log('El servidor ha iniciado en el puerto 5000')
 );
