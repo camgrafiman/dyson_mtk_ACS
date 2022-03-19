@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+	</head>
+	<body>
+		<p>Testing</p>
+	</body>
+	<script>
+		var target = ['Air treatment', 'fee', 'aaf', 'afdsa'];
+
+		function checkCategories(target) {
+			let catObj = {};
+			let obj = Object.assign({}, target);
+
+			switch (target.length) {
+				case 0:
+					catObj = {
+						cat1: '',
+						cat2: '',
+						cat3: '',
+						cat4: '',
+					};
+					break;
+				case 1:
+					catObj = {
+						cat1: obj[0],
+						cat2: '',
+						cat3: '',
+						cat4: '',
+					};
+					break;
+				case 2:
+					catObj = {
+						cat1: obj[0],
+						cat2: obj[1],
+						cat3: '',
+						cat4: '',
+					};
+					break;
+				case 3:
+					catObj = {
+						cat1: obj[0],
+						cat2: obj[1],
+						cat3: obj[2],
+						cat4: '',
+					};
+					break;
+				case 4:
+					catObj = {
+						cat1: obj[0],
+						cat2: obj[1],
+						cat3: obj[2],
+						cat4: obj[3],
+					};
+					break;
+				default:
+					catObj = {
+						cat1: '',
+						cat2: '',
+						cat3: '',
+						cat4: '',
+					};
+			}
+			return catObj;
+		}
+		console.log(checkCategories(target));
+	</script>
+</html>

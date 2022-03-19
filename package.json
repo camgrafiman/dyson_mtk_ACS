@@ -18,6 +18,7 @@
     "esm": "^3.2.25",
     "express": "^4.17.1",
     "nedb": "^1.8.0",
+    "uuidv4": "^6.2.12",
     "xml-formatter": "^2.4.0",
     "xmlbuilder2": "^2.4.1"
   },
