@@ -1,10 +1,12 @@
 import express from 'express';
 import cors from 'cors';
+import fs from 'fs';
 
 import { getHTML, getProductosData, dataProductsActual } from './lib/scraper';
 import { getProductLists } from './lib/scrapper_controllers/productList';
 import { getProductPage } from './lib/scrapper_controllers/productPageInfo';
-import { createXML } from './lib/utils/createXML';
+import { createXML, returnXML } from './lib/utils/createXML';
+var convert = require('xml-js');
 import getDB from './lib/lowdatabase';
 const db = getDB();
 const port = 5000;
@@ -25,6 +27,7 @@ app.get('/', (req, res) => {
 
 app.get('/dyson_home', async (req, res) => {
 	const result = await getHTML('https://www.dyson.co.uk/en');
+
 	// console.log(typeof result);
 	// const data = {
 	// 	html: JSON.stringify(result),
@@ -36,7 +39,25 @@ app.get('/dyson_home', async (req, res) => {
 	res.send(result);
 });
 
-app.get('/dyson/multi', async (req, res) => {
+app.get('/testing', (req, res) => {
+	//console.log(xml({ a: 1 }));
+	var jsonTest = [
+		{ hola: 'hey', buenas: 'good' },
+		{ hola: 'adios', buenas: 'nice' },
+	];
+	var resultado = convert.js2xml(jsonTest, {
+		compact: true,
+		ignoreComment: true,
+		spaces: 4,
+	});
+	console.log(resultado);
+
+	res.type('application/xml');
+
+	res.send(resultado);
+});
+
+app.get('/dyson/json/multicatalog', async (req, res) => {
 	// Get multiple product info from page lists:
 	let hairCareProductList = await getProductLists(
 		await getHTML('https://www.dyson.co.uk/hair-care/shop-hair-care'),
@@ -67,6 +88,42 @@ app.get('/dyson/multi', async (req, res) => {
 	createXML(fullCatalog, 'dyson-product-datafeed');
 	//res.send('VacuumCleaners page');
 	res.json(fullCatalog);
+});
+
+app.get('/dyson/xml/multicatalog', async (req, res) => {
+	// Get multiple product info from page lists:
+	let hairCareProductList = await getProductLists(
+		await getHTML('https://www.dyson.co.uk/hair-care/shop-hair-care'),
+		'hair-care',
+		{ country: 'uk', site: 'https://www.dyson.co.uk', language: 'en' }
+	);
+
+	let vacuumCleanersProductList = await getProductLists(
+		await getHTML('https://www.dyson.co.uk/vacuum-cleaners'),
+		'vacuum-cleaners',
+		{ country: 'uk', site: 'https://www.dyson.co.uk', language: 'en' }
+	);
+
+	let airTreatmentProductList = await getProductLists(
+		await getHTML('https://www.dyson.co.uk/air-treatment'),
+		'air-treatment',
+		{ country: 'uk', site: 'https://www.dyson.co.uk', language: 'en' }
+	);
+
+	const fullCatalog = hairCareProductList.concat(
+		vacuumCleanersProductList,
+		airTreatmentProductList
+	);
+
+	const xml = await returnXML(fullCatalog);
+	const stringXml = '<?xml version="1.0" encoding="utf-8"?>' + xml.toString();
+
+	//createXML(fullCatalog, 'dyson-product-datafeed');
+
+	res.type('application/xml');
+	res.header('Content-Type', 'application/xml');
+
+	res.send(stringXml);
 });
 
 app.get('/dyson/pdp', async (req, res) => {

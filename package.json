@@ -21,6 +21,7 @@
     "nedb": "^1.8.0",
     "uuidv4": "^6.2.12",
     "xml-formatter": "^2.4.0",
+    "xml-js": "^1.6.11",
     "xmlbuilder2": "^2.4.1"
   },
   "devDependencies": {
