@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import fs from 'fs';
+require('dotenv').config();
 
 import { getHTML, getProductosData, dataProductsActual } from './lib/scraper';
 import { getProductLists } from './lib/scrapper_controllers/productList';
@@ -10,6 +11,9 @@ var convert = require('xml-js');
 import getDB from './lib/lowdatabase';
 const db = getDB();
 const port = 5000;
+
+const ftp = require('basic-ftp');
+const nodeCron = require('node-cron');
 
 /* Servidor EXPRESS */
 const app = express();
@@ -22,6 +26,28 @@ app.use(express.static('public')); // Sirve recursos desde un directorio públic
 app.get('/', (req, res) => {
 	res.send('Inicio app!!!');
 });
+
+// Schedule a job to run every two minutes
+//const job = nodeCron.schedule("*/2 * * * *", scrapeWorldPopulation);
+
+// Schedule a job to run every minute:
+const job = nodeCron.schedule('*/1 * * * *', function () {
+	console.log('CRON JOB: EVERY MINUTE FIRED!' + new Date().toLocaleString());
+});
+
+const jobEvery2Hours = nodeCron.schedule('0 */2 * * *', function () {
+	console.log('CRON JOB: EVERY 2 HOURS FIRED! ' + new Date().toLocaleString());
+});
+
+const jobEvery12Hours = nodeCron.schedule('0 */12 * * *', function () {
+	console.log('CRON JOB: EVERY 12 HOURS FIRED! ' + new Date().toLocaleString());
+});
+
+/*
+Runs every day at 00:00:00 AM: '00 00 00 * * *'
+
+
+*/
 
 // geolocation: https://geolocation.onetrust.com/cookieconsentpub/v1/geo/location
 
@@ -124,6 +150,35 @@ app.get('/dyson/xml/multicatalog', async (req, res) => {
 	res.header('Content-Type', 'application/xml');
 
 	res.send(stringXml);
+});
+
+app.get('/dyson/ftp', async (req, res) => {
+	const client = new ftp.Client();
+	client.ftp.verbose = true;
+	// console.log(process.env.FTP_HOST);
+	// console.log(process.env.FTP_USER);
+	try {
+		// Conectar al servidor FTP:
+		await client.access({
+			host: process.env.FTP_HOST,
+			user: process.env.FTP_USER,
+			password: process.env.FTP_PASS,
+			port: 21,
+			secure: false,
+		});
+		// Me muevo al directorio donde quiero poner el contenido:
+		await client.ensureDir('dyson/feeds');
+		// Y subo el directorio entero:
+		await client.uploadFromDir('./public/feeds');
+		console.log('FICHEROS SUBIDOS AL SERVIDOR FTP!!');
+		/* Para mostrar por consola la lista de archivos dentro del servidor ftp: */
+		//console.log(await client.list());
+	} catch (err) {
+		console.log(err);
+	}
+	client.close();
+
+	res.send('FTP route.');
 });
 
 app.get('/dyson/pdp', async (req, res) => {
